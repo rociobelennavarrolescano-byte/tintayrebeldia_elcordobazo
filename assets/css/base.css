@@ -3,7 +3,7 @@
    La gráfica del Cordobazo como lenguaje de resistencia
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Saira+Stencil+One&family=Barlow+Condensed:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Poppins:wght@500;600&family=Barlow+Condensed:wght@400;500;600;700&display=swap');
 
 :root {
   /* Paleta — "combativa / cartel": fondo negro, blanco hueso, bordo */
@@ -26,10 +26,11 @@
   --col-smata-ip: #5c2d8f;
   --col-clinicas: #2f6b3a;
 
-  /* Tipografía */
-  --f-display: 'Saira Stencil One', 'Arial Narrow', sans-serif;
+   /* Tipografía */
+  --f-display: 'Rubik Dirt', 'Arial Narrow', sans-serif;
   --f-subtitulo: 'Barlow Condensed', sans-serif;
-  --f-cuerpo: 'Lora', Georgia, serif;
+  --f-cuerpo: 'Poppins', sans-serif;
+  --f-peso-cuerpo: 500;
 
   /* Ritmo */
   --r-1: 0.5rem;
@@ -66,6 +67,7 @@ body {
   background: var(--negro);
   color: var(--hueso);
   font-family: var(--f-cuerpo);
+  font-weight: var(--f-peso-cuerpo);
   font-size: 1rem;
   line-height: 1.6;
   min-height: 100vh;
