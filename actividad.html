@@ -370,14 +370,7 @@
     "react/jsx-runtime": "https://esm.sh/react@19.2.7/jsx-runtime",
     "react-dom": "https://esm.sh/react-dom@19.2.7",
     "react-dom/client": "https://esm.sh/react-dom@19.2.7/client",
-    "tldraw": "https://esm.sh/tldraw@5.1.1?bundle&deps=react@19.2.7,react-dom@19.2.7",
-    "/node/buffer.mjs": "https://esm.sh/node/buffer.mjs",
-    "/node/process.mjs": "https://esm.sh/node/process.mjs",
-    "/react-dom@19.2.7/X-ZHJlYWN0QDE5LjIuNw/es2022/client.mjs": "https://esm.sh/react-dom@19.2.7/X-ZHJlYWN0QDE5LjIuNw/es2022/client.mjs",
-    "/react-dom@19.2.7/X-ZHJlYWN0QDE5LjIuNw/es2022/react-dom.mjs": "https://esm.sh/react-dom@19.2.7/X-ZHJlYWN0QDE5LjIuNw/es2022/react-dom.mjs",
-    "/react@19.2.7/es2022/jsx-runtime.mjs": "https://esm.sh/react@19.2.7/es2022/jsx-runtime.mjs",
-    "/react@19.2.7/es2022/react.mjs": "https://esm.sh/react@19.2.7/es2022/react.mjs",
-    "/tldraw@5.1.1/X-ZHJlYWN0LWRvbUAxOS4yLjcscmVhY3RAMTkuMi43/es2022/tldraw.bundle.mjs": "https://esm.sh/tldraw@5.1.1/X-ZHJlYWN0LWRvbUAxOS4yLjcscmVhY3RAMTkuMi43/es2022/tldraw.bundle.mjs"
+    "tldraw": "https://esm.sh/tldraw@5.1.1?deps=react@19.2.7,react-dom@19.2.7"
   }
 }
 </script>
@@ -436,19 +429,13 @@
     editorSeccion.classList.add('visible');
     editorSeccion.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    if (window.inicializarTldraw) {
-      window.inicializarTldraw();
+    if (window.cargarImagenEnTldraw) {
+      window.cargarImagenEnTldraw(img);
+    } else {
+      setTimeout(() => {
+        if (window.cargarImagenEnTldraw) window.cargarImagenEnTldraw(img);
+      }, 300);
     }
-
-    requestAnimationFrame(() => {
-      if (window.cargarImagenEnTldraw) {
-        window.cargarImagenEnTldraw(img);
-      } else {
-        setTimeout(() => {
-          if (window.cargarImagenEnTldraw) window.cargarImagenEnTldraw(img);
-        }, 300);
-      }
-    });
   }
 
   btnCambiarImagen.addEventListener('click', () => {
@@ -528,31 +515,22 @@
 </script>
 
 <script type="module">
-  import React from 'https://esm.sh/react@19.2.7';
-  import { createRoot } from 'https://esm.sh/react-dom@19.2.7/client';
-  import { Tldraw, createShapeId } from 'https://esm.sh/tldraw@5.1.1?deps=react@19.2.7,react-dom@19.2.7';
+  import React from 'react';
+  import { createRoot } from 'react-dom/client';
+  import { Tldraw, AssetRecordType, createShapeId } from 'tldraw';
 
   const contenedor = document.getElementById('editor-tldraw');
   const cargando = document.getElementById('editor-cargando');
   let editorInstancia = null;
-  let editorRoot = null;
   let imagenShapeId = null;
-  let tldrawInicializado = false;
 
   function manejarMontaje(editor) {
     editorInstancia = editor;
-    tldrawInicializado = true;
     if (cargando) cargando.style.display = 'none';
   }
 
-  function inicializarTldraw() {
-    if (tldrawInicializado || editorRoot || !contenedor) return;
-    editorRoot = createRoot(contenedor);
-    editorRoot.render(React.createElement(Tldraw, { onMount: manejarMontaje }));
-  }
-
-  window.inicializarTldraw = inicializarTldraw;
-  inicializarTldraw();
+  const root = createRoot(contenedor);
+  root.render(React.createElement(Tldraw, { onMount: manejarMontaje }));
 
   function cargarImagen(img) {
     if (!editorInstancia) {
@@ -563,43 +541,45 @@
     const editor = editorInstancia;
 
     try {
-      editor.run(() => {
-        const formaActual = editor.getCurrentPageShapes();
-        const idsParaBorrar = formaActual.map((f) => f.id);
-        if (idsParaBorrar.length) editor.deleteShapes(idsParaBorrar);
+      const formaActual = editor.getCurrentPageShapes();
+      const idsParaBorrar = formaActual.map((f) => f.id);
+      if (idsParaBorrar.length) {
+        editor.updateShapes(idsParaBorrar.map((id) => ({ id, type: 'image', isLocked: false })));
+        editor.deleteShapes(idsParaBorrar);
+      }
 
-        const anchoMax = 900;
-        const altoMax = 700;
-        const w = anchoMax;
-        const h = altoMax;
+      const w = 900;
+      const h = 700;
 
-        const assetId = 'asset-' + Math.random().toString(36).slice(2,9);
-        imagenShapeId = createShapeId();
+      const assetId = AssetRecordType.createId();
+      imagenShapeId = createShapeId();
 
-        editor.createAssets([
-          {
-            id: assetId,
-            type: 'asset',
-            props: {
-              src: img.src,
-              type: 'image',
-              w,
-              h,
-            },
-          },
-        ]);
+      const asset = AssetRecordType.create({
+        id: assetId,
+        type: 'image',
+        props: {
+          name: img.titulo,
+          src: img.src,
+          w,
+          h,
+          mimeType: 'image/jpeg',
+          isAnimated: false,
+        },
+      });
 
-        editor.createShape({
-          id: imagenShapeId,
-          type: 'image',
-          x: 0,
-          y: 0,
-          isLocked: true,
-          props: { assetId, w, h, altText: img.titulo },
-        });
+      editor.createAssets([asset]);
 
-        editor.zoomToFit();
-      }, { ignoreShapeLock: true });
+      editor.createShape({
+        id: imagenShapeId,
+        type: 'image',
+        x: 0,
+        y: 0,
+        props: { assetId, w, h, altText: img.titulo },
+      });
+
+      editor.updateShape({ id: imagenShapeId, type: 'image', isLocked: true });
+
+      editor.zoomToFit();
     } catch (err) {
       console.error('Error al cargar la imagen en el lienzo:', err);
     }
