@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nodo 2 — El encuentro céntrico y la resistencia | Columna ATE</title>
+<meta name="description" content="ATE llega a Santa Rosa y General Paz, el centro queda envuelto en gases y los vecinos se suman a la resistencia.">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/columna.css">
+<style>
+  :root { --col-acento: var(--col-ate); }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+<div class="progreso-nodos" aria-hidden="true">
+  <div class="progreso-nodos__seg activo"></div>
+  <div class="progreso-nodos__seg activo"></div>
+  <div class="progreso-nodos__seg activo"></div>
+  <div class="progreso-nodos__seg"></div>
+</div>
+
+<header class="nav-top">
+  <a class="nav-top__brand" href="../../index.html">Tinta y Rebeldía</a>
+  <a class="nav-top__link" href="../../contexto.html#mapa">Volver al mapa</a>
+</header>
+
+<main id="contenido">
+  <section class="pantalla">
+    <div class="pantalla__fondo" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/2/2e/Tear_gas_smoke_street.jpg');"></div>
+
+    <div class="pantalla__contenido">
+      <p class="eyebrow pantalla__eyebrow">Nodo 2</p>
+      <h1 class="pantalla__titulo">El encuentro céntrico y la resistencia</h1>
+      <p class="pantalla__meta">
+        <span>Esquina de Santa Rosa y General Paz</span>
+        <span><strong>11:30 hs</strong></span>
+      </p>
+
+      <div class="acciones-nodo">
+        <button class="boton-flotante" data-abre-modal="modal-relato">
+          <svg class="boton-flotante__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 10h8M8 14h5M21 12a9 9 0 1 1-9-9 9 9 0 0 1 9 9Z"/></svg>
+          Escuchar el relato
+        </button>
+        <button class="boton-flotante" data-abre-modal="modal-recurso">
+          <svg class="boton-flotante__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          Ver documento histórico de la cuadra
+        </button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav class="nav-nodo">
+  <a class="nav-nodo__volver" href="nodo-1.html">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Nodo 1
+  </a>
+  <a class="btn nav-nodo__avanzar" href="nodo-3.html">Ir al nodo 3 →</a>
+</nav>
+
+<!-- Modal: Relato del personaje -->
+<div class="modal-overlay" id="modal-relato" role="dialog" aria-modal="true" aria-labelledby="relato-titulo">
+  <div class="modal">
+    <button class="modal__cerrar" aria-label="Cerrar">×</button>
+    <p class="eyebrow modal__rotulo">Relato del personaje</p>
+    <h2 class="modal__titulo" id="relato-titulo">Obrero técnico de IME</h2>
+    <p class="modal__narracion">"Llegamos a General Paz bajo una lluvia de gases lacrimógenos. La infantería cargó con saña, pero los vecinos y comerciantes céntricos abrieron sus puertas. Empezaron a tirarnos cajones, papeles y muebles desde los balcones para levantar las primeras hogueras defensivas."</p>
+    <p class="modal__texto">En la intersección de Santa Rosa y General Paz, la columna de ATE confluyó en pleno combate urbano. La inmediata respuesta de los habitantes del centro, aportando materiales para las barricadas de fuego, consolidó el apoyo social a la protesta obrera.</p>
+  </div>
+</div>
+
+<!-- Modal: Recurso gráfico -->
+<div class="modal-overlay" id="modal-recurso" role="dialog" aria-modal="true" aria-labelledby="recurso-titulo">
+  <div class="modal">
+    <button class="modal__cerrar" aria-label="Cerrar">×</button>
+    <p class="eyebrow modal__rotulo">Documento histórico de la cuadra</p>
+    <h2 class="modal__titulo" id="recurso-titulo">Santa Rosa y General Paz, en gases</h2>
+    <img class="modal__imagen" src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Tear_gas_smoke_street.jpg" alt="Calle céntrica cubierta de humo, fotografía de archivo en blanco y negro">
+    <p class="modal__credito">Imagen de referencia — Archivo del Sindicato Luz y Fuerza (reemplazar por foto original)</p>
+    <p class="modal__texto">Foto de archivo de la esquina céntrica colmada de humo y gases, en el momento en que la columna de ATE confluye con la resistencia vecinal del microcentro.</p>
+  </div>
+</div>
+
+<script src="../../assets/js/columna.js"></script>
+</body>
+</html>

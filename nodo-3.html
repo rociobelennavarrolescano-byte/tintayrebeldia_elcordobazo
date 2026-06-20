@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nodo 3 — Llegada a la CGT | Columna ATE</title>
+<meta name="description" content="La columna de ATE confluye con el resto en la sede de la CGT.">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/columna.css">
+<style>
+  :root { --col-acento: var(--col-ate); }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+<div class="progreso-nodos" aria-hidden="true">
+  <div class="progreso-nodos__seg activo"></div>
+  <div class="progreso-nodos__seg activo"></div>
+  <div class="progreso-nodos__seg activo"></div>
+  <div class="progreso-nodos__seg activo"></div>
+</div>
+
+<header class="nav-top">
+  <a class="nav-top__brand" href="../../index.html">Tinta y Rebeldía</a>
+  <a class="nav-top__link" href="../../contexto.html#mapa">Volver al mapa</a>
+</header>
+
+<main id="contenido">
+  <section class="pantalla">
+    <!-- Esta imagen de fondo es la misma para las 7 columnas: la confluencia en la CGT -->
+    <div class="pantalla__fondo" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/8/85/Cordobazo_29_de_mayo_de_1969.jpg');"></div>
+
+    <div class="pantalla__contenido">
+      <p class="eyebrow pantalla__eyebrow">Nodo 3 — Confluencia</p>
+      <h1 class="pantalla__titulo">Llegada a la CGT</h1>
+      <p class="pantalla__meta">
+        <span>Sede de la CGT de los Argentinos</span>
+        <span><strong>13:00 hs</strong></span>
+      </p>
+
+      <div class="acciones-nodo">
+        <button class="boton-flotante" data-abre-modal="modal-relato">
+          <svg class="boton-flotante__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 10h8M8 14h5M21 12a9 9 0 1 1-9-9 9 9 0 0 1 9 9Z"/></svg>
+          Escuchar el relato
+        </button>
+        <button class="boton-flotante" data-abre-modal="modal-recurso">
+          <svg class="boton-flotante__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          Ver documento histórico de la cuadra
+        </button>
+      </div>
+
+      <div class="cgt-opciones">
+        <a class="btn nav-nodo__avanzar" href="../smata-santa-isabel/index.html">Siguiente columna: SMATA Santa Isabel →</a>
+        <a class="btn" href="../../contexto.html#mapa">Volver al mapa</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Modal: Relato del personaje -->
+<div class="modal-overlay" id="modal-relato" role="dialog" aria-modal="true" aria-labelledby="relato-titulo">
+  <div class="modal">
+    <button class="modal__cerrar" aria-label="Cerrar">×</button>
+    <p class="eyebrow modal__rotulo">Relato del personaje</p>
+    <h2 class="modal__titulo" id="relato-titulo">Obrero técnico de IME</h2>
+    <p class="modal__texto">Tras el repliegue policial del centro, la columna de ATE se suma al resto de los gremios en las inmediaciones de la CGT. El plenario obrero, que partió disperso desde distintos puntos de la ciudad, se reconstituye como una sola fuerza.</p>
+  </div>
+</div>
+
+<!-- Modal: Recurso gráfico -->
+<div class="modal-overlay" id="modal-recurso" role="dialog" aria-modal="true" aria-labelledby="recurso-titulo">
+  <div class="modal">
+    <button class="modal__cerrar" aria-label="Cerrar">×</button>
+    <p class="eyebrow modal__rotulo">Documento histórico de la cuadra</p>
+    <h2 class="modal__titulo" id="recurso-titulo">Confluencia en la CGT</h2>
+    <img class="modal__imagen" src="https://upload.wikimedia.org/wikipedia/commons/8/85/Cordobazo_29_de_mayo_de_1969.jpg" alt="Multitud reunida frente a la sede sindical, fotografía de archivo en blanco y negro">
+    <p class="modal__credito">Imagen de referencia — esta imagen se repite en el nodo 3 de las 7 columnas</p>
+    <p class="modal__texto">Este nodo comparte fondo e imagen en las siete columnas: representa el punto donde todos los recorridos individuales se transforman en una sola jornada colectiva.</p>
+  </div>
+</div>
+
+<script src="../../assets/js/columna.js"></script>
+</body>
+</html>

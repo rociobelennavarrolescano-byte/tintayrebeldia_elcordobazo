@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contexto — Tinta y Rebeldía</title>
+<meta name="description" content="Qué fue el Cordobazo: contexto histórico antes de recorrer las columnas obreras y estudiantiles del 29 de mayo de 1969.">
+<link rel="stylesheet" href="assets/css/base.css">
+<style>
+  .hero-contexto {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
+    padding: var(--r-6) var(--r-3) var(--r-5);
+    isolation: isolate;
+  }
+
+  .hero-contexto::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(to top, var(--negro) 5%, rgba(10,9,8,0.55) 55%, rgba(10,9,8,0.35)),
+      url('https://upload.wikimedia.org/wikipedia/commons/8/85/Cordobazo_29_de_mayo_de_1969.jpg') center 30% / cover no-repeat;
+    filter: grayscale(0.5) contrast(1.05);
+  }
+
+  .hero-contexto__titulo {
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    max-width: 16ch;
+  }
+
+  .hero-contexto__lead {
+    margin-top: var(--r-2);
+    max-width: 52ch;
+  }
+
+  section.bloque {
+    padding: var(--r-5) 0;
+    border-top: var(--borde-textura);
+  }
+
+  .bloque__numero {
+    font-family: var(--f-display);
+    font-size: 0.85rem;
+    color: var(--bordo-claro);
+    margin-bottom: var(--r-1);
+  }
+
+  .bloque h2 {
+    font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+    max-width: 22ch;
+    margin-bottom: var(--r-2);
+  }
+
+  .bloque p {
+    max-width: 64ch;
+    color: var(--hueso-op);
+    margin-bottom: var(--r-2);
+  }
+
+  .bloque p:last-child { margin-bottom: 0; }
+
+  .cita {
+    margin: var(--r-4) 0;
+    padding-left: var(--r-3);
+    border-left: 3px solid var(--bordo);
+    font-style: italic;
+    font-size: 1.25rem;
+    max-width: 50ch;
+    color: var(--hueso);
+  }
+
+  .cita cite {
+    display: block;
+    margin-top: var(--r-1);
+    font-style: normal;
+    font-family: var(--f-subtitulo);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--hueso-op);
+  }
+
+  .datos-clave {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--r-3);
+    margin-top: var(--r-3);
+  }
+
+  .dato {
+    border: var(--borde-textura);
+    padding: var(--r-2);
+  }
+
+  .dato__valor {
+    font-family: var(--f-display);
+    font-size: 1.6rem;
+    color: var(--bordo-claro);
+  }
+
+  .dato__etiqueta {
+    font-family: var(--f-subtitulo);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--hueso-op);
+    margin-top: 0.3rem;
+  }
+
+  /* ---------- Mapa de columnas (versión simple, sin SVG de Figma todavía) ---------- */
+  .mapa {
+    padding: var(--r-5) 0 var(--r-6);
+    border-top: var(--borde-textura);
+  }
+
+  .mapa__intro {
+    max-width: 60ch;
+    margin-bottom: var(--r-4);
+  }
+
+  .mapa__intro p {
+    color: var(--hueso-op);
+    margin-top: var(--r-2);
+  }
+
+  .columnas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1px;
+    background: rgba(242,237,227,0.12);
+    border: var(--borde-textura);
+  }
+
+  .columna-card {
+    background: var(--negro-2);
+    padding: var(--r-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--r-1);
+    min-height: 200px;
+    position: relative;
+    transition: background var(--transicion);
+  }
+
+  .columna-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--col-card, var(--bordo));
+  }
+
+  .columna-card:hover {
+    background: #1c1916;
+  }
+
+  .columna-card__numero {
+    font-family: var(--f-subtitulo);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--hueso-op);
+  }
+
+  .columna-card__nombre {
+    font-family: var(--f-display);
+    font-size: 1.3rem;
+    margin-top: auto;
+  }
+
+  .columna-card__pj {
+    font-family: var(--f-subtitulo);
+    font-size: 0.88rem;
+    color: var(--hueso-op);
+  }
+
+  .columna-card__ir {
+    margin-top: var(--r-2);
+    font-family: var(--f-subtitulo);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bordo-claro);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+  }
+
+  .columna-card.deshabilitada {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .columna-card.deshabilitada .columna-card__ir::after {
+    content: '— próximamente';
+    color: var(--hueso-op);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .actividad-cta {
+    margin-top: var(--r-4);
+    border: var(--borde-textura);
+    padding: var(--r-4) var(--r-3);
+    text-align: center;
+    background: linear-gradient(180deg, rgba(110,20,35,0.1), transparent);
+  }
+
+  .actividad-cta h3 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    margin-bottom: var(--r-1);
+  }
+
+  .actividad-cta p {
+    max-width: 50ch;
+    margin-inline: auto;
+    color: var(--hueso-op);
+    margin-bottom: var(--r-3);
+  }
+</style>
+</head>
+<body>
+
+<header class="nav-top">
+  <a class="nav-top__brand" href="index.html">Tinta y Rebeldía</a>
+  <a class="nav-top__link" href="index.html">Inicio</a>
+</header>
+
+<main>
+
+  <section class="hero-contexto">
+    <p class="eyebrow">29 de mayo de 1969</p>
+    <h1 class="hero-contexto__titulo">¿Qué fue el Cordobazo?</h1>
+    <p class="hero-contexto__lead lead">Antes de recorrer las columnas, un poco de contexto sobre la jornada que cambió el rumbo político de la Argentina.</p>
+  </section>
+
+  <div class="contenedor">
+
+    <section class="bloque">
+      <p class="bloque__numero">01</p>
+      <h2>Un país bajo la dictadura de Onganía</h2>
+      <p>Hacia 1969, la Revolución Argentina —la dictadura encabezada por Juan Carlos Onganía desde 1966— atravesaba un fuerte desgaste. La quita de derechos laborales, la intervención de las universidades y el congelamiento salarial habían generado un descontento creciente entre los sectores obreros y estudiantiles de Córdoba, una ciudad con un movimiento sindical particularmente combativo y una activa vida universitaria.</p>
+      <p>En ese contexto, distintos gremios —entre ellos SMATA, Luz y Fuerza, UOM y ATE— y las agrupaciones estudiantiles comenzaron a coordinar un paro activo con movilización, lejos de las medidas de fuerza tradicionales que se limitaban a la quietud de los lugares de trabajo.</p>
+    </section>
+
+    <section class="bloque">
+      <p class="bloque__numero">02</p>
+      <h2>La jornada del 29 de mayo</h2>
+      <p>Desde la mañana, columnas obreras partieron desde distintos puntos de la periferia industrial de Córdoba —Santa Isabel, Ferreyra, los talleres metalúrgicos pericentrales, la sede de EPEC— con destino al centro de la ciudad. Cada columna tenía su propio recorrido, su propio ritmo y sus propios puntos de fricción con las fuerzas de seguridad.</p>
+
+      <blockquote class="cita">
+        “El impacto de su caída se sintió con fuerza al replegarnos hacia La Cañada. Ver su cuerpo desató una indignación incontrolable.”
+        <cite>Relato sobre el asesinato de Máximo Mena, obrero de SMATA</cite>
+      </blockquote>
+
+      <p>El asesinato de Máximo Mena a manos de la policía, en el cruce de Boulevard San Juan y La Cañada, marcó un punto de quiebre: lo que había comenzado como una protesta organizada se transformó en una insurrección popular que desbordó la capacidad represiva del Estado y dejó, por varias horas, el centro de la ciudad bajo control de obreros, estudiantes y vecinos.</p>
+
+      <div class="datos-clave">
+        <div class="dato">
+          <p class="dato__valor">7</p>
+          <p class="dato__etiqueta">Columnas obreras y estudiantiles</p>
+        </div>
+        <div class="dato">
+          <p class="dato__valor">10:00</p>
+          <p class="dato__etiqueta">Hora de inicio de la marcha</p>
+        </div>
+        <div class="dato">
+          <p class="dato__valor">17:00</p>
+          <p class="dato__etiqueta">Horas de resistencia en Barrio Clínicas</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="bloque">
+      <p class="bloque__numero">03</p>
+      <h2>La gráfica como lenguaje de resistencia</h2>
+      <p>El Cordobazo dejó, además de su huella política, un archivo visual: afiches de la CGT de los Argentinos, volantes mimeografiados, fotografías de prensa y registros gráficos —como los de Ricardo Carpani— que tradujeron la urgencia de la calle en imágenes de alto impacto. Esta experiencia recorre siete columnas a través de ese archivo: cada una conserva el relato de quien la protagonizó y el recurso gráfico que documentó su paso.</p>
+    </section>
+
+  </div>
+
+  <section class="mapa" id="mapa">
+    <div class="contenedor">
+      <div class="mapa__intro">
+        <p class="eyebrow">El mapa</p>
+        <h2 style="margin-top: var(--r-1);">Elegí una columna para empezar a recorrer</h2>
+        <p>Cada columna parte de un punto distinto de la ciudad y confluye, hacia el mediodía, en la sede de la CGT. Elegí una para conocer su recorrido, su personaje y los recursos gráficos que documentaron su paso.</p>
+      </div>
+
+      <div class="columnas-grid">
+
+        <a class="columna-card" href="columnas/ate/index.html" style="--col-card: var(--col-ate);">
+          <p class="columna-card__numero">Columna 01 — 10:00 hs</p>
+          <p class="columna-card__nombre">ATE</p>
+          <p class="columna-card__pj">Obrero técnico de IME</p>
+          <span class="columna-card__ir">Recorrer columna →</span>
+        </a>
+
+        <a class="columna-card deshabilitada" href="#" style="--col-card: var(--col-smata-sr);">
+          <p class="columna-card__numero">Columna 02 — 10:00 hs</p>
+          <p class="columna-card__nombre">SMATA<br>Santa Isabel</p>
+          <p class="columna-card__pj">Obrero metalúrgico, IKA-Renault</p>
+          <span class="columna-card__ir">Recorrer columna</span>
+        </a>
+
+        <a class="columna-card deshabilitada" href="#" style="--col-card: var(--col-uom);">
+          <p class="columna-card__numero">Columna 03 — 10:30 hs</p>
+          <p class="columna-card__nombre">UOM</p>
+          <p class="columna-card__pj">Tornero metalúrgico</p>
+          <span class="columna-card__ir">Recorrer columna</span>
+        </a>
+
+        <a class="columna-card deshabilitada" href="#" style="--col-card: var(--col-lyf);">
+          <p class="columna-card__numero">Columna 04 — 10:30 hs</p>
+          <p class="columna-card__nombre">Luz y Fuerza</p>
+          <p class="columna-card__pj">Administrativa de EPEC</p>
+          <span class="columna-card__ir">Recorrer columna</span>
+        </a>
+
+        <a class="columna-card deshabilitada" href="#" style="--col-card: var(--col-smata-fp);">
+          <p class="columna-card__numero">Columna 05 — 10:00 hs</p>
+          <p class="columna-card__nombre">SMATA<br>Ferreyra</p>
+          <p class="columna-card__pj">Técnico electromecánico, Perkins</p>
+          <span class="columna-card__ir">Recorrer columna</span>
+        </a>
+
+        <a class="columna-card deshabilitada" href="#" style="--col-card: var(--col-smata-ip);">
+          <p class="columna-card__numero">Columna 06 — 10:15 hs</p>
+          <p class="columna-card__nombre">SMATA<br>Perdriel</p>
+          <p class="columna-card__pj">Especialista en matricería</p>
+          <span class="columna-card__ir">Recorrer columna</span>
+        </a>
+
+        <a class="columna-card deshabilitada" href="#" style="--col-card: var(--col-clinicas);">
+          <p class="columna-card__numero">Columna 07 — 13:30 hs</p>
+          <p class="columna-card__nombre">Clínicas</p>
+          <p class="columna-card__pj">Estudiante universitario/a, UNC</p>
+          <span class="columna-card__ir">Recorrer columna</span>
+        </a>
+
+      </div>
+
+      <div class="actividad-cta">
+        <h3>Hacé tu propia intervención gráfica</h3>
+        <p>Elegí una imagen de archivo y sumá tu pintada o consigna. Tu intervención se publica en un foro junto a las de otros visitantes.</p>
+        <a class="btn btn--solido" href="actividad.html">Ir a la actividad</a>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>
