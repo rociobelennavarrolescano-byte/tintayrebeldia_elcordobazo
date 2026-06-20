@@ -1,0 +1,91 @@
+/* ============================================================
+   TINTA Y REBELDÍA — Editor de intervención gráfica
+   ============================================================ */
+
+.ei-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--negro-2);
+  border: var(--borde-textura);
+  border-bottom: none;
+}
+
+.ei-grupo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.ei-btn {
+  width: 2.4rem;
+  height: 2.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  background: transparent;
+  border: var(--borde-textura);
+  color: var(--hueso);
+  cursor: pointer;
+  transition: border-color var(--transicion), background var(--transicion);
+}
+
+.ei-btn:hover {
+  border-color: var(--bordo-claro);
+}
+
+.ei-btn[aria-pressed="true"] {
+  background: var(--bordo);
+  border-color: var(--bordo);
+}
+
+.ei-btn-accion {
+  width: auto;
+  padding: 0 0.9rem;
+  font-family: var(--f-subtitulo);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  gap: 0.4em;
+}
+
+.ei-color {
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border: var(--borde-textura);
+  background: transparent;
+  cursor: pointer;
+}
+
+.ei-grosor {
+  width: 100px;
+  accent-color: var(--bordo-claro);
+}
+
+.ei-lienzo-envoltorio {
+  width: 100%;
+  border: var(--borde-textura);
+  background: var(--negro-2);
+  line-height: 0;
+}
+
+.ei-canvas {
+  display: block;
+  width: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+@media (max-width: 640px) {
+  .ei-barra {
+    justify-content: center;
+  }
+  .ei-grosor {
+    width: 80px;
+  }
+}
