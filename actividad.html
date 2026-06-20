@@ -6,7 +6,7 @@
 <title>Actividad — Intervení una imagen | Tinta y Rebeldía</title>
 <meta name="description" content="Elegí una imagen de archivo del Cordobazo y sumá tu pintada o consigna. Publicá tu intervención en el foro.">
 <link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="https://esm.sh/tldraw@5.1.1/tldraw.css">
+<link rel="stylesheet" href="assets/css/editor-intervencion.css">
 <style>
   .actividad-hero {
     padding: calc(var(--r-6) + var(--r-2)) var(--r-3) var(--r-4);
@@ -124,7 +124,7 @@
     padding: 0.15rem 0.45rem;
   }
 
-  /* ---------- Editor (tldraw embebido) ---------- */
+  /* ---------- Editor de intervención (canvas propio) ---------- */
   .editor {
     padding: var(--r-4) 0;
     border-top: var(--borde-textura);
@@ -145,29 +145,6 @@
 
   .editor__marco {
     width: 100%;
-    aspect-ratio: 16/9;
-    border: var(--borde-textura);
-    background: var(--negro-2);
-    position: relative;
-    overflow: hidden;
-  }
-
-  #editor-tldraw {
-    position: absolute;
-    inset: 0;
-  }
-
-  .editor__cargando {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--f-subtitulo);
-    font-size: 0.85rem;
-    color: var(--hueso-op);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
   }
 
   .editor__nota {
@@ -331,11 +308,10 @@
       </div>
 
       <div class="editor__marco">
-        <div id="editor-tldraw" role="application" aria-label="Lienzo de dibujo sobre la imagen elegida"></div>
-        <p class="editor__cargando" id="editor-cargando">Cargando el lienzo…</p>
+        <div id="editor-intervencion"></div>
       </div>
 
-      <p class="editor__nota">La imagen elegida ya está cargada y fija en el lienzo. Usá las herramientas de tldraw para dibujar encima, escribir consignas o agregar formas — igual que una pintada callejera.</p>
+      <p class="editor__nota">La imagen elegida ya está cargada y fija de fondo. Usá la barra de arriba para dibujar, escribir consignas o agregar formas — igual que una pintada callejera. Cuando termines, tocá "Listo, publicar".</p>
 
       <div class="editor__acciones">
         <div class="editor__campo">
@@ -363,25 +339,12 @@
 
 </main>
 
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@19.2.7",
-    "react/jsx-runtime": "https://esm.sh/react@19.2.7/jsx-runtime",
-    "react-dom": "https://esm.sh/react-dom@19.2.7",
-    "react-dom/client": "https://esm.sh/react-dom@19.2.7/client",
-    "tldraw": "https://esm.sh/tldraw@5.1.1?deps=react@19.2.7,react-dom@19.2.7"
-  }
-}
-</script>
-
+<script src="assets/js/editor-intervencion.js"></script>
 <script>
   // ---------------------------------------------------------------
   // Banco de imágenes de archivo para intervenir.
   // Reemplazar "src" por las fotografías reales del Cordobazo cuando
   // estén subidas. Por ahora usan imágenes de referencia temporales.
-  // Importante: la fuente de las imágenes debe permitir CORS (Wikimedia
-  // Commons lo permite) para que la exportación del dibujo funcione.
   // ---------------------------------------------------------------
   const IMAGENES_ARCHIVO = [
     { id: 'img-01', titulo: 'Columna obrera', src: 'https://picsum.photos/seed/columna-obrera-01/800/1000?grayscale' },
@@ -402,10 +365,12 @@
   const foroGrid = document.getElementById('foro-grid');
   const foroVacio = document.getElementById('foro-vacio');
   const foroContador = document.getElementById('foro-contador');
-  const editorCargando = document.getElementById('editor-cargando');
 
   let imagenSeleccionada = null;
-  let tldrawEditorInstancia = null;
+
+  // El editor se crea una sola vez; cada elección de imagen solo
+  // cambia el fondo, no recrea todo el componente.
+  const editorIntervencion = crearEditorIntervencion('editor-intervencion');
 
   IMAGENES_ARCHIVO.forEach((img, i) => {
     const item = document.createElement('button');
@@ -429,13 +394,7 @@
     editorSeccion.classList.add('visible');
     editorSeccion.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    if (window.cargarImagenEnTldraw) {
-      window.cargarImagenEnTldraw(img);
-    } else {
-      setTimeout(() => {
-        if (window.cargarImagenEnTldraw) window.cargarImagenEnTldraw(img);
-      }, 300);
-    }
+    editorIntervencion.cargarImagenDeFondo(img.src);
   }
 
   btnCambiarImagen.addEventListener('click', () => {
@@ -482,16 +441,15 @@
     });
   }
 
-  btnPublicar.addEventListener('click', async () => {
+  btnPublicar.addEventListener('click', () => {
     if (!imagenSeleccionada) return;
     const autor = inputAutor.value.trim() || 'Anónimo';
 
     let srcParaForo = imagenSeleccionada.src;
 
-    if (window.exportarIntervencionTldraw) {
+    if (editorIntervencion.hayDibujo()) {
       try {
-        const dataUrl = await window.exportarIntervencionTldraw();
-        if (dataUrl) srcParaForo = dataUrl;
+        srcParaForo = editorIntervencion.exportarComoDataUrl();
       } catch (err) {
         console.warn('No se pudo exportar la intervención, se publica la imagen original:', err);
       }
@@ -514,99 +472,7 @@
   pintarForo();
 </script>
 
-<script type="module">
-  import React from 'react';
-  import { createRoot } from 'react-dom/client';
-  import { Tldraw, AssetRecordType, createShapeId } from 'tldraw';
-
-  const contenedor = document.getElementById('editor-tldraw');
-  const cargando = document.getElementById('editor-cargando');
-  let editorInstancia = null;
-  let imagenShapeId = null;
-
-  function manejarMontaje(editor) {
-    editorInstancia = editor;
-    if (cargando) cargando.style.display = 'none';
-  }
-
-  const root = createRoot(contenedor);
-  root.render(React.createElement(Tldraw, { onMount: manejarMontaje }));
-
-  function cargarImagen(img) {
-    if (!editorInstancia) {
-      setTimeout(() => cargarImagen(img), 150);
-      return;
-    }
-
-    const editor = editorInstancia;
-
-    try {
-      const formaActual = editor.getCurrentPageShapes();
-      const idsParaBorrar = formaActual.map((f) => f.id);
-      if (idsParaBorrar.length) {
-        editor.updateShapes(idsParaBorrar.map((id) => ({ id, type: 'image', isLocked: false })));
-        editor.deleteShapes(idsParaBorrar);
-      }
-
-      const w = 900;
-      const h = 700;
-
-      const assetId = AssetRecordType.createId();
-      imagenShapeId = createShapeId();
-
-      const asset = AssetRecordType.create({
-        id: assetId,
-        type: 'image',
-        props: {
-          name: img.titulo,
-          src: img.src,
-          w,
-          h,
-          mimeType: 'image/jpeg',
-          isAnimated: false,
-        },
-      });
-
-      editor.createAssets([asset]);
-
-      editor.createShape({
-        id: imagenShapeId,
-        type: 'image',
-        x: 0,
-        y: 0,
-        props: { assetId, w, h, altText: img.titulo },
-      });
-
-      editor.updateShape({ id: imagenShapeId, type: 'image', isLocked: true });
-
-      editor.zoomToFit();
-    } catch (err) {
-      console.error('Error al cargar la imagen en el lienzo:', err);
-    }
-  }
-
-  window.cargarImagenEnTldraw = cargarImagen;
-
-  window.exportarIntervencionTldraw = async function () {
-    if (!editorInstancia) return null;
-    const shapeIds = editorInstancia.getCurrentPageShapeIds();
-    if (!shapeIds.size) return null;
-    const resultado = await editorInstancia.toImage([...shapeIds], {
-      format: 'png',
-      background: true,
-    });
-    if (!resultado) return null;
-    return await new Promise((resolve, reject) => {
-      const lector = new FileReader();
-      lector.onload = () => resolve(lector.result);
-      lector.onerror = reject;
-      lector.readAsDataURL(resultado.blob);
-    });
-  };
-</script>
-
 <script src="assets/js/scroll-reveal.js"></script>
-
 
 </body>
 </html>
