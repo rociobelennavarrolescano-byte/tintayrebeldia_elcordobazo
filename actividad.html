@@ -551,7 +551,7 @@
         const w = anchoMax;
         const h = altoMax;
 
-        const assetId = AssetRecordType.createId();
+        const assetId = 'asset-' + Math.random().toString(36).slice(2,9);
         imagenShapeId = createShapeId();
 
         editor.createAssets([
