@@ -71,14 +71,16 @@
   width: 100%;
   border: var(--borde-textura);
   background: var(--negro-2);
-  line-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .ei-canvas {
   display: block;
-  width: 100%;
   cursor: crosshair;
   touch-action: none;
+  max-width: 100%;
 }
 
 @media (max-width: 640px) {
