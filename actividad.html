@@ -370,7 +370,14 @@
     "react/jsx-runtime": "https://esm.sh/react@19.2.7/jsx-runtime",
     "react-dom": "https://esm.sh/react-dom@19.2.7",
     "react-dom/client": "https://esm.sh/react-dom@19.2.7/client",
-    "tldraw": "https://esm.sh/tldraw@5.1.1?deps=react@19.2.7,react-dom@19.2.7"
+    "tldraw": "https://esm.sh/tldraw@5.1.1?bundle&deps=react@19.2.7,react-dom@19.2.7",
+    "/node/buffer.mjs": "https://esm.sh/node/buffer.mjs",
+    "/node/process.mjs": "https://esm.sh/node/process.mjs",
+    "/react-dom@19.2.7/X-ZHJlYWN0QDE5LjIuNw/es2022/client.mjs": "https://esm.sh/react-dom@19.2.7/X-ZHJlYWN0QDE5LjIuNw/es2022/client.mjs",
+    "/react-dom@19.2.7/X-ZHJlYWN0QDE5LjIuNw/es2022/react-dom.mjs": "https://esm.sh/react-dom@19.2.7/X-ZHJlYWN0QDE5LjIuNw/es2022/react-dom.mjs",
+    "/react@19.2.7/es2022/jsx-runtime.mjs": "https://esm.sh/react@19.2.7/es2022/jsx-runtime.mjs",
+    "/react@19.2.7/es2022/react.mjs": "https://esm.sh/react@19.2.7/es2022/react.mjs",
+    "/tldraw@5.1.1/X-ZHJlYWN0LWRvbUAxOS4yLjcscmVhY3RAMTkuMi43/es2022/tldraw.bundle.mjs": "https://esm.sh/tldraw@5.1.1/X-ZHJlYWN0LWRvbUAxOS4yLjcscmVhY3RAMTkuMi43/es2022/tldraw.bundle.mjs"
   }
 }
 </script>
@@ -521,9 +528,9 @@
 </script>
 
 <script type="module">
-  import React from 'react';
-  import { createRoot } from 'react-dom/client';
-  import { Tldraw, createShapeId } from 'tldraw';
+  import React from 'https://esm.sh/react@19.2.7';
+  import { createRoot } from 'https://esm.sh/react-dom@19.2.7/client';
+  import { Tldraw, createShapeId } from 'https://esm.sh/tldraw@5.1.1?deps=react@19.2.7,react-dom@19.2.7';
 
   const contenedor = document.getElementById('editor-tldraw');
   const cargando = document.getElementById('editor-cargando');
@@ -572,17 +579,13 @@
         editor.createAssets([
           {
             id: assetId,
-            type: 'image',
-            typeName: 'asset',
+            type: 'asset',
             props: {
-              name: img.titulo,
               src: img.src,
+              type: 'image',
               w,
               h,
-              mimeType: 'image/jpeg',
-              isAnimated: false,
             },
-            meta: {},
           },
         ]);
 
