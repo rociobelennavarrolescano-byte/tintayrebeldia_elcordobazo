@@ -66,7 +66,7 @@ function crearEditorIntervencion(contenedorId) {
     // Alto máximo que puede ocupar el lienzo sin obligar a hacer scroll:
     // alto de la ventana, menos un margen para la barra de herramientas,
     // el texto de ayuda, los botones de abajo y un respiro visual.
-    const margenReservado = 320;
+    const margenReservado = 180;
     const altoMaximoPantalla = Math.max(window.innerHeight - margenReservado, 280);
 
     let ancho = anchoDisponible;
