@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contexto — Tinta y Rebeldía</title>
+<meta name="description" content="Qué fue el Cordobazo: contexto histórico antes de recorrer las columnas obreras y estudiantiles del 29 de mayo de 1969.">
+<link rel="stylesheet" href="assets/css/base.css">
+<style>
+  .hero-contexto {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
+    padding: var(--r-6) var(--r-3) var(--r-5);
+    isolation: isolate;
+  }
+
+  .hero-contexto::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(to top, var(--negro) 5%, rgba(10,9,8,0.55) 55%, rgba(10,9,8,0.35)),
+      url('https://upload.wikimedia.org/wikipedia/commons/8/85/Cordobazo_29_de_mayo_de_1969.jpg') center 30% / cover no-repeat;
+    filter: grayscale(0.5) contrast(1.05);
+  }
+
+  .hero-contexto__titulo {
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    max-width: 16ch;
+  }
+
+  .hero-contexto__lead {
+    margin-top: var(--r-2);
+    max-width: 52ch;
+  }
+
+  section.bloque {
+    padding: var(--r-5) 0;
+    border-top: var(--borde-textura);
+  }
+
+  .bloque__numero {
+    font-family: var(--f-display);
+    font-size: 0.85rem;
+    color: var(--bordo-claro);
+    margin-bottom: var(--r-1);
+  }
+
+  .bloque h2 {
+    font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+    max-width: 22ch;
+    margin-bottom: var(--r-2);
+  }
+
+  .bloque p {
+    max-width: 64ch;
+    color: var(--hueso-op);
+    margin-bottom: var(--r-2);
+  }
+
+  .bloque p:last-child { margin-bottom: 0; }
+
+  .cita {
+    margin: var(--r-4) 0;
+    padding-left: var(--r-3);
+    border-left: 3px solid
