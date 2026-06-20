@@ -58,16 +58,30 @@ function crearEditorIntervencion(contenedorId) {
   const botonDeshacer = contenedor.querySelector('[data-accion="deshacer"]');
   const botonBorrar = contenedor.querySelector('[data-accion="borrar"]');
 
-  // --- Tamaño del canvas: sigue al contenedor, manteniendo proporción de imagen ---
+  // --- Tamaño del canvas: entra completo en pantalla, sin necesidad de scroll ---
   function ajustarTamano() {
     const ratio = imagenFondo ? imagenFondo.naturalHeight / imagenFondo.naturalWidth : 0.75;
     const anchoDisponible = envoltorio.clientWidth;
-    const alto = Math.round(anchoDisponible * ratio);
+
+    // Alto máximo que puede ocupar el lienzo sin obligar a hacer scroll:
+    // alto de la ventana, menos un margen para la barra de herramientas,
+    // el texto de ayuda, los botones de abajo y un respiro visual.
+    const margenReservado = 320;
+    const altoMaximoPantalla = Math.max(window.innerHeight - margenReservado, 280);
+
+    let ancho = anchoDisponible;
+    let alto = Math.round(ancho * ratio);
+
+    if (alto > altoMaximoPantalla) {
+      alto = altoMaximoPantalla;
+      ancho = Math.round(alto / ratio);
+    }
+
     const dpr = window.devicePixelRatio || 1;
 
-    canvas.style.width = anchoDisponible + 'px';
+    canvas.style.width = ancho + 'px';
     canvas.style.height = alto + 'px';
-    canvas.width = Math.round(anchoDisponible * dpr);
+    canvas.width = Math.round(ancho * dpr);
     canvas.height = Math.round(alto * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
