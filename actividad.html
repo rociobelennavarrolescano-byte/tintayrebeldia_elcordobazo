@@ -429,13 +429,19 @@
     editorSeccion.classList.add('visible');
     editorSeccion.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    if (window.cargarImagenEnTldraw) {
-      window.cargarImagenEnTldraw(img);
-    } else {
-      setTimeout(() => {
-        if (window.cargarImagenEnTldraw) window.cargarImagenEnTldraw(img);
-      }, 300);
+    if (window.inicializarTldraw) {
+      window.inicializarTldraw();
     }
+
+    requestAnimationFrame(() => {
+      if (window.cargarImagenEnTldraw) {
+        window.cargarImagenEnTldraw(img);
+      } else {
+        setTimeout(() => {
+          if (window.cargarImagenEnTldraw) window.cargarImagenEnTldraw(img);
+        }, 300);
+      }
+    });
   }
 
   btnCambiarImagen.addEventListener('click', () => {
@@ -517,20 +523,29 @@
 <script type="module">
   import React from 'react';
   import { createRoot } from 'react-dom/client';
-  import { Tldraw, AssetRecordType, createShapeId } from 'tldraw';
+  import { Tldraw, createShapeId } from 'tldraw';
 
   const contenedor = document.getElementById('editor-tldraw');
   const cargando = document.getElementById('editor-cargando');
   let editorInstancia = null;
+  let editorRoot = null;
   let imagenShapeId = null;
+  let tldrawInicializado = false;
 
   function manejarMontaje(editor) {
     editorInstancia = editor;
+    tldrawInicializado = true;
     if (cargando) cargando.style.display = 'none';
   }
 
-  const root = createRoot(contenedor);
-  root.render(React.createElement(Tldraw, { onMount: manejarMontaje }));
+  function inicializarTldraw() {
+    if (tldrawInicializado || editorRoot || !contenedor) return;
+    editorRoot = createRoot(contenedor);
+    editorRoot.render(React.createElement(Tldraw, { onMount: manejarMontaje }));
+  }
+
+  window.inicializarTldraw = inicializarTldraw;
+  inicializarTldraw();
 
   function cargarImagen(img) {
     if (!editorInstancia) {
