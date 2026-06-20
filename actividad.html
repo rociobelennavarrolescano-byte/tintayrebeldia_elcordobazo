@@ -6,6 +6,7 @@
 <title>Actividad — Intervení una imagen | Tinta y Rebeldía</title>
 <meta name="description" content="Elegí una imagen de archivo del Cordobazo y sumá tu pintada o consigna. Publicá tu intervención en el foro.">
 <link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="https://esm.sh/tldraw@5.1.1/tldraw.css">
 <style>
   .actividad-hero {
     padding: calc(var(--r-6) + var(--r-2)) var(--r-3) var(--r-4);
@@ -147,12 +148,26 @@
     aspect-ratio: 16/9;
     border: var(--borde-textura);
     background: var(--negro-2);
+    position: relative;
+    overflow: hidden;
   }
 
-  .editor__marco iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
+  #editor-tldraw {
+    position: absolute;
+    inset: 0;
+  }
+
+  .editor__cargando {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--f-subtitulo);
+    font-size: 0.85rem;
+    color: var(--hueso-op);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   .editor__nota {
@@ -300,7 +315,7 @@
 
   <div class="contenedor">
 
-<section class="selector reveal" id="selector">
+    <section class="selector" id="selector">
       <h2>1. Elegí una imagen de archivo</h2>
       <p class="selector__hint">8 fotografías de la jornada. Tocá una para empezar a intervenirla.</p>
 
@@ -316,22 +331,11 @@
       </div>
 
       <div class="editor__marco">
-        <!--
-          Para activar el editor real: creá una sala en https://tldraw.com,
-          subí la imagen elegida como fondo dentro de esa sala, y pegá la URL
-          de la sala (algo como https://tldraw.com/r/abc123) en TLDRAW_ROOM_URL
-          más abajo en el script. Mientras tanto se muestra un marco de espera.
-        -->
-        <iframe
-          id="tldraw-frame"
-          src=""
-          title="Editor de intervención gráfica (tldraw)"
-          allow="clipboard-write"
-          loading="lazy"
-        ></iframe>
+        <div id="editor-tldraw" role="application" aria-label="Lienzo de dibujo sobre la imagen elegida"></div>
+        <p class="editor__cargando" id="editor-cargando">Cargando el lienzo…</p>
       </div>
 
-      <p class="editor__nota">El lienzo se abre sobre la imagen elegida. Usá las herramientas de tldraw para dibujar, escribir consignas o agregar formas — igual que una pintada callejera.</p>
+      <p class="editor__nota">La imagen elegida ya está cargada y fija en el lienzo. Usá las herramientas de tldraw para dibujar encima, escribir consignas o agregar formas — igual que una pintada callejera.</p>
 
       <div class="editor__acciones">
         <div class="editor__campo">
@@ -342,7 +346,7 @@
       </div>
     </section>
 
-<section class="foro reveal" id="foro">
+    <section class="foro" id="foro">
       <div class="foro__cabecera">
         <div>
           <p class="eyebrow">3. El foro</p>
@@ -359,11 +363,25 @@
 
 </main>
 
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.2.7",
+    "react/jsx-runtime": "https://esm.sh/react@19.2.7/jsx-runtime",
+    "react-dom": "https://esm.sh/react-dom@19.2.7",
+    "react-dom/client": "https://esm.sh/react-dom@19.2.7/client",
+    "tldraw": "https://esm.sh/tldraw@5.1.1?deps=react@19.2.7,react-dom@19.2.7"
+  }
+}
+</script>
+
 <script>
   // ---------------------------------------------------------------
   // Banco de imágenes de archivo para intervenir.
   // Reemplazar "src" por las fotografías reales del Cordobazo cuando
   // estén subidas. Por ahora usan imágenes de referencia temporales.
+  // Importante: la fuente de las imágenes debe permitir CORS (Wikimedia
+  // Commons lo permite) para que la exportación del dibujo funcione.
   // ---------------------------------------------------------------
   const IMAGENES_ARCHIVO = [
     { id: 'img-01', titulo: 'Columna obrera', src: 'https://upload.wikimedia.org/wikipedia/commons/8/85/Cordobazo_29_de_mayo_de_1969.jpg' },
@@ -376,23 +394,19 @@
     { id: 'img-08', titulo: 'Barrio Clínicas', src: 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Tear_gas_smoke_street.jpg' },
   ];
 
-  // URL de la sala de tldraw a embeber. Reemplazar por la sala real.
-  // Ej: 'https://tldraw.com/r/TU-SALA-AQUI'
-  const TLDRAW_ROOM_URL = '';
-
   const galeria = document.getElementById('galeria');
-  const editor = document.getElementById('editor');
-  const tldrawFrame = document.getElementById('tldraw-frame');
+  const editorSeccion = document.getElementById('editor');
   const btnCambiarImagen = document.getElementById('btn-cambiar-imagen');
   const btnPublicar = document.getElementById('btn-publicar');
   const inputAutor = document.getElementById('input-autor');
   const foroGrid = document.getElementById('foro-grid');
   const foroVacio = document.getElementById('foro-vacio');
   const foroContador = document.getElementById('foro-contador');
+  const editorCargando = document.getElementById('editor-cargando');
 
   let imagenSeleccionada = null;
+  let tldrawEditorInstancia = null;
 
-  // Pintar galería
   IMAGENES_ARCHIVO.forEach((img, i) => {
     const item = document.createElement('button');
     item.className = 'galeria__item';
@@ -412,32 +426,23 @@
       el.classList.toggle('seleccionada', el.getAttribute('data-id') === img.id);
     });
 
-    if (TLDRAW_ROOM_URL) {
-      tldrawFrame.src = TLDRAW_ROOM_URL;
-    } else {
-      // Marco de espera mientras no haya una sala de tldraw configurada
-      tldrawFrame.removeAttribute('src');
-      tldrawFrame.srcdoc = `
-        <div style="font-family: sans-serif; height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.5rem; background:#141210; color:#f2ede3; text-align:center; padding: 2rem;">
-          <p style="font-weight:600; margin-bottom:0.5rem;">Editor tldraw pendiente de configurar</p>
-          <p style="font-size:0.85rem; opacity:0.7; max-width:40ch;">Cargá la imagen "${img.titulo}" como fondo en una sala de tldraw.com y pegá la URL de la sala en el código (TLDRAW_ROOM_URL).</p>
-        </div>`;
-    }
+    editorSeccion.classList.add('visible');
+    editorSeccion.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    editor.classList.add('visible');
-    editor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (window.cargarImagenEnTldraw) {
+      window.cargarImagenEnTldraw(img);
+    } else {
+      setTimeout(() => {
+        if (window.cargarImagenEnTldraw) window.cargarImagenEnTldraw(img);
+      }, 300);
+    }
   }
 
   btnCambiarImagen.addEventListener('click', () => {
-    editor.classList.remove('visible');
+    editorSeccion.classList.remove('visible');
     document.getElementById('selector').scrollIntoView({ behavior: 'smooth' });
   });
 
-  // ---------------------------------------------------------------
-  // Foro simulado en localStorage (front-end only).
-  // En producción esto debería ser un backend real que reciba el
-  // export de la intervención de tldraw y guarde la imagen.
-  // ---------------------------------------------------------------
   const CLAVE_FORO = 'tinta-y-rebeldia-foro';
 
   function leerForo() {
@@ -477,26 +482,139 @@
     });
   }
 
-  btnPublicar.addEventListener('click', () => {
+  btnPublicar.addEventListener('click', async () => {
     if (!imagenSeleccionada) return;
     const autor = inputAutor.value.trim() || 'Anónimo';
+
+    let srcParaForo = imagenSeleccionada.src;
+
+    if (window.exportarIntervencionTldraw) {
+      try {
+        const dataUrl = await window.exportarIntervencionTldraw();
+        if (dataUrl) srcParaForo = dataUrl;
+      } catch (err) {
+        console.warn('No se pudo exportar la intervención, se publica la imagen original:', err);
+      }
+    }
+
     const publicaciones = leerForo();
     publicaciones.push({
       autor,
       imagenTitulo: imagenSeleccionada.titulo,
-      src: imagenSeleccionada.src,
+      src: srcParaForo,
       fecha: new Date().toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' }),
     });
     guardarForo(publicaciones);
     pintarForo();
     inputAutor.value = '';
-    editor.classList.remove('visible');
+    editorSeccion.classList.remove('visible');
     document.getElementById('foro').scrollIntoView({ behavior: 'smooth' });
   });
 
   pintarForo();
 </script>
+
+<script type="module">
+  import React from 'react';
+  import { createRoot } from 'react-dom/client';
+  import { Tldraw, AssetRecordType, createShapeId } from 'tldraw';
+
+  const contenedor = document.getElementById('editor-tldraw');
+  const cargando = document.getElementById('editor-cargando');
+  let editorInstancia = null;
+  let imagenShapeId = null;
+
+  function manejarMontaje(editor) {
+    editorInstancia = editor;
+    if (cargando) cargando.style.display = 'none';
+  }
+
+  const root = createRoot(contenedor);
+  root.render(React.createElement(Tldraw, { onMount: manejarMontaje }));
+
+  function cargarImagen(img) {
+    if (!editorInstancia) {
+      setTimeout(() => cargarImagen(img), 150);
+      return;
+    }
+
+    const editor = editorInstancia;
+
+    editor.run(() => {
+      const formaActual = editor.getCurrentPageShapes();
+      const idsParaBorrar = formaActual.map((f) => f.id);
+      if (idsParaBorrar.length) editor.deleteShapes(idsParaBorrar);
+    }, { ignoreShapeLock: true });
+
+    const probeImg = new Image();
+    probeImg.crossOrigin = 'anonymous';
+    probeImg.onload = () => {
+      const anchoNatural = probeImg.naturalWidth || 1200;
+      const altoNatural = probeImg.naturalHeight || 800;
+      const anchoMax = 900;
+      const escala = anchoNatural > anchoMax ? anchoMax / anchoNatural : 1;
+      const w = Math.round(anchoNatural * escala);
+      const h = Math.round(altoNatural * escala);
+
+      const assetId = AssetRecordType.createId();
+      imagenShapeId = createShapeId();
+
+      editor.createAssets([
+        {
+          id: assetId,
+          type: 'image',
+          typeName: 'asset',
+          props: {
+            name: img.titulo,
+            src: img.src,
+            w,
+            h,
+            mimeType: 'image/jpeg',
+            isAnimated: false,
+          },
+          meta: {},
+        },
+      ]);
+
+      editor.createShape({
+        id: imagenShapeId,
+        type: 'image',
+        x: 0,
+        y: 0,
+        isLocked: true,
+        props: { assetId, w, h, altText: img.titulo },
+      });
+
+      editor.zoomToFit();
+    };
+    probeImg.onerror = () => {
+      console.warn('No se pudo precargar la imagen elegida en el lienzo.');
+    };
+    probeImg.src = img.src;
+  }
+
+  window.cargarImagenEnTldraw = cargarImagen;
+
+  window.exportarIntervencionTldraw = async function () {
+    if (!editorInstancia) return null;
+    const shapeIds = editorInstancia.getCurrentPageShapeIds();
+    if (!shapeIds.size) return null;
+    const resultado = await editorInstancia.toImage([...shapeIds], {
+      format: 'png',
+      background: true,
+    });
+    if (!resultado) return null;
+    return await new Promise((resolve, reject) => {
+      const lector = new FileReader();
+      lector.onload = () => resolve(lector.result);
+      lector.onerror = reject;
+      lector.readAsDataURL(resultado.blob);
+    });
+  };
+</script>
+
 <script src="assets/js/scroll-reveal.js"></script>
+
 
 </body>
 </html>
