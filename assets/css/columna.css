@@ -1,0 +1,289 @@
+/* ============================================================
+   TINTA Y REBELDÍA — Estructura de columna
+   Usado por las 7 páginas de columna (ate, smata-sr, uom, etc.)
+   Cada columna define --col-acento en :root del documento.
+   ============================================================ */
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--r-2);
+  z-index: 100;
+  background: var(--bordo);
+  color: var(--hueso);
+  padding: 0.6rem 1rem;
+  font-family: var(--f-subtitulo);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+.skip-link:focus { top: var(--r-2); }
+
+/* ---------- Barra de progreso de nodos ---------- */
+.progreso-nodos {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 60;
+  display: flex;
+  gap: 2px;
+}
+.progreso-nodos__seg {
+  flex: 1;
+  height: 3px;
+  background: rgba(242,237,227,0.15);
+}
+.progreso-nodos__seg.activo {
+  background: var(--col-acento, var(--bordo-claro));
+}
+
+/* ---------- Pantalla de presentación / nodo ---------- */
+.pantalla {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  isolation: isolate;
+  padding: var(--r-6) var(--r-3) var(--r-5);
+}
+
+.pantalla__fondo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(0.45) contrast(1.08);
+}
+
+.pantalla__fondo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--negro) 8%, rgba(10,9,8,0.4) 50%, rgba(10,9,8,0.15));
+}
+
+.pantalla__contenido {
+  max-width: 720px;
+}
+
+.pantalla__eyebrow {
+  color: var(--col-acento, var(--bordo-claro));
+}
+
+.pantalla__titulo {
+  font-size: clamp(2rem, 5.5vw, 3.6rem);
+  margin-top: var(--r-1);
+}
+
+.pantalla__meta {
+  margin-top: var(--r-2);
+  font-family: var(--f-subtitulo);
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  color: var(--hueso-op);
+  display: flex;
+  gap: var(--r-3);
+  flex-wrap: wrap;
+}
+
+.pantalla__meta span strong {
+  color: var(--hueso);
+  font-weight: 600;
+}
+
+/* ---------- Presentación del personaje (primera pantalla de la columna) ---------- */
+.pj-card {
+  margin-top: var(--r-4);
+  border-left: 3px solid var(--col-acento, var(--bordo));
+  padding-left: var(--r-3);
+  max-width: 56ch;
+}
+
+.pj-card__rotulo {
+  font-family: var(--f-subtitulo);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hueso-op);
+}
+
+.pj-card__nombre {
+  font-family: var(--f-display);
+  font-size: 1.4rem;
+  margin-top: 0.3rem;
+}
+
+.pantalla__cta {
+  margin-top: var(--r-4);
+}
+
+/* ---------- Botones flotantes de interacción dentro de un nodo ---------- */
+.acciones-nodo {
+  margin-top: var(--r-4);
+  display: flex;
+  gap: var(--r-2);
+  flex-wrap: wrap;
+}
+
+.boton-flotante {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--f-subtitulo);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.92rem;
+  border: var(--borde-textura);
+  background: rgba(10,9,8,0.55);
+  backdrop-filter: blur(6px);
+  color: var(--hueso);
+  padding: 0.95rem 1.5rem;
+  cursor: pointer;
+  transition: transform var(--transicion), border-color var(--transicion), background var(--transicion);
+  animation: flotar 5s ease-in-out infinite;
+}
+
+.boton-flotante:nth-child(2) { animation-delay: -2.4s; }
+
+@keyframes flotar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.boton-flotante:hover {
+  border-color: var(--col-acento, var(--bordo-claro));
+  background: rgba(10,9,8,0.8);
+}
+
+.boton-flotante__icono {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boton-flotante { animation: none; }
+}
+
+/* ---------- Navegación inferior del nodo (avanzar / volver) ---------- */
+.nav-nodo {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 55;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--r-2) var(--r-3);
+  background: linear-gradient(to top, rgba(10,9,8,0.92), transparent);
+}
+
+.nav-nodo__volver {
+  font-family: var(--f-subtitulo);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--hueso-op);
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  transition: color var(--transicion);
+}
+.nav-nodo__volver:hover { color: var(--hueso); }
+
+.nav-nodo__avanzar {
+  background: var(--col-acento, var(--bordo));
+  border-color: var(--col-acento, var(--bordo));
+}
+.nav-nodo__avanzar:hover {
+  filter: brightness(1.15);
+}
+
+/* ---------- Modal / pop-up de recurso gráfico ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(10,9,8,0.88);
+  backdrop-filter: blur(3px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--r-3);
+}
+
+.modal-overlay.abierto {
+  display: flex;
+}
+
+.modal {
+  background: var(--negro-2);
+  border: var(--borde-textura);
+  border-top: 3px solid var(--col-acento, var(--bordo));
+  max-width: 640px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: var(--r-3);
+  position: relative;
+}
+
+.modal__cerrar {
+  position: absolute;
+  top: var(--r-2);
+  right: var(--r-2);
+  background: transparent;
+  border: none;
+  color: var(--hueso);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.4rem;
+}
+
+.modal__rotulo {
+  color: var(--col-acento, var(--bordo-claro));
+}
+
+.modal__titulo {
+  font-size: 1.5rem;
+  margin-top: 0.4rem;
+  margin-bottom: var(--r-2);
+  padding-right: var(--r-4);
+}
+
+.modal__imagen {
+  width: 100%;
+  margin-bottom: var(--r-2);
+  filter: grayscale(0.3);
+}
+
+.modal__credito {
+  font-family: var(--f-subtitulo);
+  font-size: 0.78rem;
+  color: var(--hueso-op);
+  margin-bottom: var(--r-2);
+}
+
+.modal__texto {
+  color: var(--hueso-op);
+}
+
+.modal__texto + .modal__texto {
+  margin-top: var(--r-2);
+}
+
+.modal__narracion {
+  font-style: italic;
+  border-left: 2px solid var(--col-acento, var(--bordo));
+  padding-left: var(--r-2);
+  margin-bottom: var(--r-2);
+}
+
+/* ---------- Conexión a CGT (nodo final compartido) ---------- */
+.cgt-opciones {
+  margin-top: var(--r-4);
+  display: flex;
+  gap: var(--r-2);
+  flex-wrap: wrap;
+}
