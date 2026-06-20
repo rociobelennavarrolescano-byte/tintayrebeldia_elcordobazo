@@ -540,57 +540,51 @@
 
     const editor = editorInstancia;
 
-    editor.run(() => {
-      const formaActual = editor.getCurrentPageShapes();
-      const idsParaBorrar = formaActual.map((f) => f.id);
-      if (idsParaBorrar.length) editor.deleteShapes(idsParaBorrar);
-    }, { ignoreShapeLock: true });
+    try {
+      editor.run(() => {
+        const formaActual = editor.getCurrentPageShapes();
+        const idsParaBorrar = formaActual.map((f) => f.id);
+        if (idsParaBorrar.length) editor.deleteShapes(idsParaBorrar);
 
-    const probeImg = new Image();
-    probeImg.crossOrigin = 'anonymous';
-    probeImg.onload = () => {
-      const anchoNatural = probeImg.naturalWidth || 1200;
-      const altoNatural = probeImg.naturalHeight || 800;
-      const anchoMax = 900;
-      const escala = anchoNatural > anchoMax ? anchoMax / anchoNatural : 1;
-      const w = Math.round(anchoNatural * escala);
-      const h = Math.round(altoNatural * escala);
+        const anchoMax = 900;
+        const altoMax = 700;
+        const w = anchoMax;
+        const h = altoMax;
 
-      const assetId = AssetRecordType.createId();
-      imagenShapeId = createShapeId();
+        const assetId = AssetRecordType.createId();
+        imagenShapeId = createShapeId();
 
-      editor.createAssets([
-        {
-          id: assetId,
-          type: 'image',
-          typeName: 'asset',
-          props: {
-            name: img.titulo,
-            src: img.src,
-            w,
-            h,
-            mimeType: 'image/jpeg',
-            isAnimated: false,
+        editor.createAssets([
+          {
+            id: assetId,
+            type: 'image',
+            typeName: 'asset',
+            props: {
+              name: img.titulo,
+              src: img.src,
+              w,
+              h,
+              mimeType: 'image/jpeg',
+              isAnimated: false,
+            },
+            meta: {},
           },
-          meta: {},
-        },
-      ]);
+        ]);
 
-      editor.createShape({
-        id: imagenShapeId,
-        type: 'image',
-        x: 0,
-        y: 0,
-        isLocked: true,
-        props: { assetId, w, h, altText: img.titulo },
-      });
+        editor.createShape({
+          id: imagenShapeId,
+          type: 'image',
+          x: 0,
+          y: 0,
+          isLocked: true,
+          props: { assetId, w, h, altText: img.titulo },
+        });
 
-      editor.zoomToFit();
-    };
-    probeImg.onerror = () => {
-      console.warn('No se pudo precargar la imagen elegida en el lienzo.');
-    };
-    probeImg.src = img.src;
+        editor.zoomToFit();
+      }, { ignoreShapeLock: true });
+    } catch (err) {
+      console.error('Error al cargar la imagen en el lienzo:', err);
+    }
   }
 
   window.cargarImagenEnTldraw = cargarImagen;
